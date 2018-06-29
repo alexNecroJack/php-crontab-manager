@@ -345,8 +345,10 @@ class CrontabManager {
      */
     protected function _replaceCronContents() {
         file_put_contents($this->_tmpfile, $this->cronContent, LOCK_EX);
-        $out = $this->_exec($this->_command() . ' ' .
-                $this->_tmpfile . ' 2>&1', $ret);
+        $command = $this->_command() .
+            (trim($this->cronContent) !== ''? ' '.$this->_tmpfile : ' -r').
+            ' 2>&1';
+        $out = $this->_exec($command, $ret);
         $this->_setTempFile();
         if ($ret != 0) {
             throw new \UnexpectedValueException(
